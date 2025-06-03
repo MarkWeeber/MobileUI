@@ -7,18 +7,9 @@ public class ProfileControl : MonoBehaviour
     [SerializeField] InputField _playerNameInputField;
 
     private string _enteredPlayerName;
-    private void OnSubmit()
+    public void SubmitPlayerName()
     {
 
     }
 
-    private void CheckIfPlayerAlreadExists()
-    {
-
-    }
-
-    private void SaveNewPlayerPrefs(string name)
-    {
-
-    }
 }
