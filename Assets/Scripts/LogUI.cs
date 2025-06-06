@@ -28,10 +28,9 @@ public class LogUI : SingletonBehaviour<LogUI>
     private int _count = 0;
 
 
-    protected override void Awake()
+    protected override void Initialize ()
     {
         dontDestroyOnload = true; // this is needed if you want to keep this LOG UI after scene is changed
-        base.Awake();
         _textList = _informationContainer.GetComponentsInChildren<TMP_Text>().ToList();
         _count = _textList.Count;
         if (_showConsoleMessages)

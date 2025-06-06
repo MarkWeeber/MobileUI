@@ -16,10 +16,9 @@ public class SettingsUI : SingletonBehaviour<SettingsUI>
     private float _musicVolume;
 
 
-    protected override void Awake()
+    protected override void Initialize()
     {
         dontDestroyOnload = true;
-        base.Awake();
     }
 
     private void Start()
