@@ -5,7 +5,7 @@ public class ProgressBarSliderUI : MonoBehaviour
 {
     [SerializeField] private Slider _slider;
     [SerializeField] private GameObject _checkMarkPrefab;
-    [SerializeField] private int _levelCount = 2;
+    [SerializeField] private int _stageCount = 2;
 
     private CheckMarkPosition[] checkMarkPositions;
     private RectTransform _rectTransform;
@@ -16,22 +16,22 @@ public class ProgressBarSliderUI : MonoBehaviour
 
     private void Start()
     {
-        checkMarkPositions = new CheckMarkPosition[_levelCount];
+        checkMarkPositions = new CheckMarkPosition[_stageCount];
         PlaceCheckMarksAtStart();
         _slider.onValueChanged.AddListener(SliderValueChanged); // for testing purposes from UI inspector, need to comment this line before build
     }
 
     private void PlaceCheckMarksAtStart()
     {
-        if (_levelCount > 1)
+        if (_stageCount > 1)
         {
-            for (int i = 0; i < _levelCount; i++)
+            for (int i = 0; i < _stageCount; i++)
             {
-                _setAnchor.x = (float)(i / (float)(_levelCount - 1));
+                _setAnchor.x = (float)(i / (float)(_stageCount - 1));
                 CreateAndPlaceCheckMark(_setAnchor, i);
             }
         }
-        else if (_levelCount == 1)
+        else if (_stageCount == 1)
         {
             _setAnchor.x = 0.5f;
             CreateAndPlaceCheckMark(_setAnchor, 0);
@@ -53,7 +53,7 @@ public class ProgressBarSliderUI : MonoBehaviour
     private void SliderValueChanged(float newValue)
     {
         bool currentLevelFound = (newValue == 1f)?true:false;
-        for (int i = _levelCount - 1; i >= 0; i--)
+        for (int i = _stageCount - 1; i >= 0; i--)
         {
             if (currentLevelFound)
             {
