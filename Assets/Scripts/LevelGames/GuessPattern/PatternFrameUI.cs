@@ -9,9 +9,16 @@ public class PatternFrameUI : MonoBehaviour, IPointerClickHandler, IPointerExitH
     [SerializeField] private TMP_Text _numberText;
 
     private int _number;
+    public int Number { get => _number; }
     private bool _clicked;
 
     public Action<PatternFrameUI> OnClicked;
+
+    public void SetNumber(int number)
+    {
+        _number = number;
+        _numberText.text = number.ToString();
+    }
 
     public void ClearClick()
     {
