@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
-[CreateAssetMenu(fileName = "Scene Management Asset", menuName = "Custom Assets/Scene Management Asset")]
-public class ScenesManagementSO : ScriptableObject
+[CreateAssetMenu(fileName = "Game Levels Asset", menuName = "Custom Assets/Game Levels Asset")]
+public class GameLevelsAsset : ScriptableObject
 {
     public int MainSceneBuildIndex = 0;
     public LevelSceneInfo[] LevelSceneInfos;

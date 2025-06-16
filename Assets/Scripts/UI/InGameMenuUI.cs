@@ -27,7 +27,7 @@ public class InGameMenuUI : SingletonBehaviour<InGameMenuUI>
     private float _effectsSoundVolume;
     public float MusicVolume { get => _musicVolume; }
     private float _musicVolume;
-    private ScenesManagementSO _scenesManagementSO;
+    private GameLevelsAsset _gameLevelsAsset;
 
     protected override void Initialize()
     {
@@ -35,18 +35,19 @@ public class InGameMenuUI : SingletonBehaviour<InGameMenuUI>
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
-    private void Start()
+    private void OnDestroy()
     {
-        _scenesManagementSO = SceneManagement.Instance.ScenesManagementSO;
-        _effectsSoundVolume = _effectsSoundSlider.value;
-        _musicVolume = _musicVolumeSlider.value;
-        // check if current scene is main scene
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+    
+    private void CheckSceneNavigationButtons()
+    {
         int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
-        if (_scenesManagementSO.MainSceneBuildIndex == currentSceneIndex)
+        if (_gameLevelsAsset.MainSceneBuildIndex == currentSceneIndex)
         {
             _settingsButton.gameObject.SetActive(true);
-            //_sceneNavigationButton.gameObject.SetActive(false);
-            //_currentLevelInformationButton.gameObject.SetActive(false);
+            _sceneNavigationButton.gameObject.SetActive(false);
+            _currentLevelInformationButton.gameObject.SetActive(false);
         }
         else
         {
@@ -54,11 +55,6 @@ public class InGameMenuUI : SingletonBehaviour<InGameMenuUI>
             _sceneNavigationButton.gameObject.SetActive(true);
             _currentLevelInformationButton.gameObject.SetActive(true);
         }
-    }
-
-    private void OnDestroy()
-    {
-        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
     public void RestartButtonOnClick()
@@ -95,7 +91,11 @@ public class InGameMenuUI : SingletonBehaviour<InGameMenuUI>
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        _gameLevelsAsset = GameContext.Instance.GameLevelsAsset;
+        _effectsSoundVolume = _effectsSoundSlider.value;
+        _musicVolume = _musicVolumeSlider.value;
         _soundSettingsBackgroundPanel.gameObject.SetActive(false);
         _sceneNavigationBackgroundPanel.gameObject.SetActive(false);
+        CheckSceneNavigationButtons();
     }
 }
