@@ -1,28 +1,54 @@
 ﻿using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GuessPatternGame : MonoBehaviour
 {
     [SerializeField] private Transform _guessPatterPanel;
     [SerializeField] private int _minRandomNumber = 1;
     [SerializeField] private int _maxRandomNumber = 99;
+    [SerializeField] private ProgressBarSliderUI _progressBarSliderUI;
 
     private PatternFrameUI[] _patternFrameUIs;
     private PatternFrameUI _patterFrameUI;
+    private GameLevelsAsset _gameLevelsAsset;
+    private LevelSceneInfo _levelSceneInfo;
     private int _newRandomNumber;
     private int[] _selectedPattern;
     private int _clickedCount = 0;
+    private int _currentStage = 0;
 
     private void Start()
     {
+        GetLevelData();
+        InitializeProgressBar();
         InitializePatternFrames();
         RandomizeNumbers(registerCallbacks: true);
+        AnnounceOnStart();
+    }
+
+    private void GetLevelData()
+    {
+        _gameLevelsAsset = GameContext.Instance.GameLevelsAsset;
+        int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+        _levelSceneInfo = _gameLevelsAsset.LevelSceneInfos.Where(n => n.LevelSceneBuildIndex == currentSceneIndex).First();
+    }
+
+    private void AnnounceOnStart()
+    {
+        GeneralInformationWindowUI.Instance.CallSimpleWindow(_levelSceneInfo.InfoMessage);
     }
 
     private void InitializePatternFrames()
     {
         _patternFrameUIs = _guessPatterPanel.GetComponentsInChildren<PatternFrameUI>();
         _selectedPattern = new int[_patternFrameUIs.Length];
+    }
+
+    private void InitializeProgressBar()
+    {
+        _progressBarSliderUI.StageCount = _levelSceneInfo.LevelStageCount;
+        _progressBarSliderUI.Initialize();
     }
 
     private void RandomizeNumbers(bool registerCallbacks = false, bool reset = false)
@@ -65,7 +91,7 @@ public class GuessPatternGame : MonoBehaviour
             _selectedPattern[_clickedCount] = patterFrameUI.Number;
             _clickedCount++;
         }
-        
+
     }
 
     private void ResetPattern(bool won = false)
@@ -73,7 +99,12 @@ public class GuessPatternGame : MonoBehaviour
         RandomizeNumbers(reset: true);
         if (won)
         {
-            Debug.Log("WIN");
+            _currentStage++;
+            _progressBarSliderUI.PushProgress();
+            if (_currentStage >= _levelSceneInfo.LevelStageCount)
+            {
+                Debug.Log("LEVEL WIN");
+            }
         }
         else
         {

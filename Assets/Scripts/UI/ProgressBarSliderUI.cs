@@ -5,33 +5,44 @@ public class ProgressBarSliderUI : MonoBehaviour
 {
     [SerializeField] private Slider _slider;
     [SerializeField] private GameObject _checkMarkPrefab;
-    [SerializeField] private int _stageCount = 2;
+    public int StageCount = 2;
 
     private CheckMarkPosition[] checkMarkPositions;
     private RectTransform _rectTransform;
     private GameObject _instantiatedObject;
     private Vector2 _setAnchor = new Vector2(0.5f, 0.5f);
     private ProgressMarkUI _progressMarkUI;
+    private int _currentStage = 0;
+    private float _distanceBetweenMarks;
 
 
-    private void Start()
+    public void Initialize()
     {
-        checkMarkPositions = new CheckMarkPosition[_stageCount];
+        checkMarkPositions = new CheckMarkPosition[StageCount];
+        _distanceBetweenMarks = 1 / (float)(Mathf.Max(StageCount, 1) - 1); // divisor should not be equal to 0
         PlaceCheckMarksAtStart();
-        _slider.onValueChanged.AddListener(SliderValueChanged); // for testing purposes from UI inspector, need to comment this line before build
+        ManageSliderChange(0);
+        //_slider.onValueChanged.AddListener(SliderValueChanged); // for testing purposes from UI inspector, need to comment this line before build
+    }
+
+    public void PushProgress()
+    {
+        _currentStage++;
+        float newStage = _currentStage * _distanceBetweenMarks;
+        ManageSliderChange(newStage);
     }
 
     private void PlaceCheckMarksAtStart()
     {
-        if (_stageCount > 1)
+        if (StageCount > 1)
         {
-            for (int i = 0; i < _stageCount; i++)
+            for (int i = 0; i < StageCount; i++)
             {
-                _setAnchor.x = (float)(i / (float)(_stageCount - 1));
+                _setAnchor.x = i * _distanceBetweenMarks;
                 CreateAndPlaceCheckMark(_setAnchor, i);
             }
         }
-        else if (_stageCount == 1)
+        else if (StageCount == 1)
         {
             _setAnchor.x = 0.5f;
             CreateAndPlaceCheckMark(_setAnchor, 0);
@@ -46,39 +57,39 @@ public class ProgressBarSliderUI : MonoBehaviour
         _rectTransform.anchorMax = setAnchor;
         _rectTransform.anchoredPosition = Vector2.zero;
         _progressMarkUI = _instantiatedObject.GetComponent<ProgressMarkUI>();
+        _progressMarkUI.SetIncomplete();
         checkMarkPositions[index].setAnchor = setAnchor;
         checkMarkPositions[index].progressMarkUI = _progressMarkUI;
     }
 
-    private void SliderValueChanged(float newValue)
+    private void ManageSliderChange(float newValue)
     {
-        bool currentLevelFound = (newValue == 1f)?true:false;
-        for (int i = _stageCount - 1; i >= 0; i--)
+        // progress marks
+        for (int i = 0; i < StageCount; i++)
         {
-            if (currentLevelFound)
+            if (newValue == 0f) // fresh start
+            {
+                checkMarkPositions[i].progressMarkUI.SetPending();
+                break;
+            }
+            if (newValue > 1f) // all complete
             {
                 checkMarkPositions[i].progressMarkUI.SetComplete();
                 continue;
             }
-            float currentX = checkMarkPositions[i].setAnchor.x;
-            if (newValue > currentX)
+            float currentProgressMarksXPosition = checkMarkPositions[i].setAnchor.x;
+            if (newValue > currentProgressMarksXPosition)
             {
                 checkMarkPositions[i].progressMarkUI.SetComplete();
-                currentLevelFound = true;
             }
             else
             {
-                if ((i > 0 && newValue > checkMarkPositions[i - 1].setAnchor.x) || (i == 0 && newValue == 0)) // there are still some checkmarks left
-                {
-                    checkMarkPositions[i].progressMarkUI.SetPending();
-                    currentLevelFound = true;
-                }
-                else
-                {
-                    checkMarkPositions[i].progressMarkUI.SetIncomplete();
-                }
+                checkMarkPositions[i].progressMarkUI.SetPending();
+                break;
             }
         }
+        // slider value
+        _slider.value = newValue;
     }
 
     private struct CheckMarkPosition

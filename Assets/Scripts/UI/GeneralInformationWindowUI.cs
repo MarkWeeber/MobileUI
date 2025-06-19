@@ -56,7 +56,7 @@ public class GeneralInformationWindowUI : SingletonBehaviour<GeneralInformationW
 
     public void OnButtonClick()
     {
-        _embeddedAction.Invoke();
+        _embeddedAction?.Invoke();
         ClearEmbeddAction();
         DisablePanels();
     }
