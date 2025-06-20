@@ -36,7 +36,7 @@ public class GuessPatternGame : MonoBehaviour
 
     private void AnnounceOnStart()
     {
-        GeneralInformationWindowUI.Instance.CallSimpleWindow(_levelSceneInfo.InfoMessage);
+        GeneralInformationWindowUI.Instance.CallWindow(message: _levelSceneInfo.InfoMessage, action: () => { TimerUI.Instance.StartTimer(); });
     }
 
     private void InitializePatternFrames()
@@ -96,20 +96,25 @@ public class GuessPatternGame : MonoBehaviour
 
     private void ResetPattern(bool won = false)
     {
-        RandomizeNumbers(reset: true);
         if (won)
         {
             _currentStage++;
             _progressBarSliderUI.PushProgress();
-            if (_currentStage >= _levelSceneInfo.LevelStageCount)
-            {
-                Debug.Log("LEVEL WIN");
-            }
+        }
+        if (_currentStage >= _levelSceneInfo.LevelStageCount) // all stages complete
+        {
+            // level win
+            OnLevelWin();
         }
         else
         {
-            Debug.Log("TRY AGAIN");
+            RandomizeNumbers(reset: true);
         }
+    }
+
+    private void OnLevelWin()
+    {
+        Debug.Log("LEVEL WIN");
     }
 
     private bool IsArraySortedAscending(int[] array)

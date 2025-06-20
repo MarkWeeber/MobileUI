@@ -24,7 +24,6 @@ public class PatternFrameUI : MonoBehaviour, IPointerClickHandler, IPointerExitH
     {
         _clicked = false;
         _animator.SetTrigger("Reset");
-        Debug.Log("RESET");
     }
 
     public void OnPointerClick(PointerEventData eventData)

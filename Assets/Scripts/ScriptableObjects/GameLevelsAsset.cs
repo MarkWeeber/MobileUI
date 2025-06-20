@@ -10,6 +10,7 @@ public class GameLevelsAsset : ScriptableObject
 [System.Serializable]
 public struct LevelSceneInfo
 {
+    public string GameName;
     public int LevelSceneBuildIndex;
     public string InfoMessage;
     public int LevelStageCount;
