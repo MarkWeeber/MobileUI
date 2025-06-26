@@ -12,6 +12,7 @@ public struct LevelSceneInfo
 {
     public string GameName;
     public int LevelSceneBuildIndex;
+    public int LevelId;
     public string InfoMessage;
     public int LevelStageCount;
 }

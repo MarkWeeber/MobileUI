@@ -13,17 +13,17 @@ public class ScoreBoardElementUI : MonoBehaviour
         _numberText.text = number.ToString();
     }
 
-    private void SetPlayerName(string name)
+    public void SetPlayerName(string name)
     {
         _playerNameText.text = name;
     }
 
-    private void SetPlayerLastScore(int score)
+    public void SetPlayerLastScore(int score)
     {
         _playerLastScore.text = score.ToString();
     }
 
-    private void SetPlayerBestScore(int score)
+    public void SetPlayerBestScore(int score)
     {
         _playerBestScore.text = score.ToString();
     }
