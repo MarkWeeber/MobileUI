@@ -9,6 +9,7 @@ public class GuessPatternGame : MonoBehaviour
     [SerializeField] private int _maxRandomNumber = 99;
     [SerializeField] private ProgressBarSliderUI _progressBarSliderUI;
 
+    private LocalSaveManager _localSaveManager;
     private PatternFrameUI[] _patternFrameUIs;
     private PatternFrameUI _patterFrameUI;
     private GameLevelsAsset _gameLevelsAsset;
@@ -20,6 +21,7 @@ public class GuessPatternGame : MonoBehaviour
 
     private void Start()
     {
+        _localSaveManager = LocalSaveManager.Instance;
         GetLevelData();
         InitializeProgressBar();
         InitializePatternFrames();
@@ -114,6 +116,7 @@ public class GuessPatternGame : MonoBehaviour
 
     private void OnLevelWin()
     {
+        _localSaveManager.SubmitScore(_levelSceneInfo.LevelId, 13);
         Debug.Log("LEVEL WIN");
     }
 

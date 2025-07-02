@@ -3,7 +3,6 @@
 [System.Serializable]
 public class ProgressData
 {
-
     public string ProfileName = "";
     public List<ProgressMetric> ProgressMetrics = new List<ProgressMetric>();
 
