@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class ScoresUI : SingletonBehaviour<ScoresUI>
@@ -27,7 +25,7 @@ public class ScoresUI : SingletonBehaviour<ScoresUI>
         HidePanel();
     }
 
-    private void ShowPanel()
+    public void ShowPanel()
     {
         _background.gameObject.SetActive(true);
     }
@@ -35,6 +33,7 @@ public class ScoresUI : SingletonBehaviour<ScoresUI>
     private void HidePanel()
     {
         _background.gameObject.SetActive(false);
+        ClearScores();
     }
 
     private void ClearScores()
@@ -49,13 +48,17 @@ public class ScoresUI : SingletonBehaviour<ScoresUI>
         }
     }
 
-    public void AddScore(int number, string playerName, int lastScore, int bestScore)
+    public void AddScores(Score[] scores)
     {
-        _instantiatedScoreBoardElement = Instantiate(_scoreBoardElementPrefab, _contentTransform).GetComponent<ScoreBoardElementUI>();
-        _instantiatedScoreBoardElement.SetNumber(number);
-        _instantiatedScoreBoardElement.SetPlayerName(playerName);
-        _instantiatedScoreBoardElement.SetPlayerLastScore(lastScore);
-        _instantiatedScoreBoardElement.SetPlayerBestScore(bestScore);
+        int reversedOrder = scores.Length;
+        foreach (var score in scores)
+        {
+            _instantiatedScoreBoardElement = Instantiate(_scoreBoardElementPrefab, _contentTransform).GetComponent<ScoreBoardElementUI>();
+            _instantiatedScoreBoardElement.SetNumber(reversedOrder);
+            _instantiatedScoreBoardElement.SetPlayerName(score.PlayerName);
+            _instantiatedScoreBoardElement.SetPlayerLastScore(TimerUI.GetTimeString(score.LastTime));
+            _instantiatedScoreBoardElement.SetPlayerBestScore(TimerUI.GetTimeString(score.BestTime));
+            reversedOrder--;
+        }
     }
-
 }

@@ -2493,7 +2493,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71f21e0e608f14c48baf2ead546f32ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cipheringEnabled: 1
+  _cipheringEnabled: 0
 --- !u!4 &1901529755
 Transform:
   m_ObjectHideFlags: 0

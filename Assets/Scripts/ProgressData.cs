@@ -16,7 +16,7 @@ public class ProgressData
 public struct ProgressMetric
 {
     public int LevelId;
-    public int MaxScore;
-    public int LastScore;
+    public float BestTime;
+    public float LastTime;
 
 }

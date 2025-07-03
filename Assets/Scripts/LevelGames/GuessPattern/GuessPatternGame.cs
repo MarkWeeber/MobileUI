@@ -1,4 +1,6 @@
 ﻿using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -13,6 +15,8 @@ public class GuessPatternGame : MonoBehaviour
     private PatternFrameUI[] _patternFrameUIs;
     private PatternFrameUI _patterFrameUI;
     private GameLevelsAsset _gameLevelsAsset;
+    private TimerUI _timerUI;
+    private ScoresUI _scoresUI;
     private LevelSceneInfo _levelSceneInfo;
     private int _newRandomNumber;
     private int[] _selectedPattern;
@@ -22,6 +26,8 @@ public class GuessPatternGame : MonoBehaviour
     private void Start()
     {
         _localSaveManager = LocalSaveManager.Instance;
+        _timerUI = TimerUI.Instance;
+        _scoresUI = ScoresUI.Instance;
         GetLevelData();
         InitializeProgressBar();
         InitializePatternFrames();
@@ -38,7 +44,7 @@ public class GuessPatternGame : MonoBehaviour
 
     private void AnnounceOnStart()
     {
-        GeneralInformationWindowUI.Instance.CallWindow(message: _levelSceneInfo.InfoMessage, action: () => { TimerUI.Instance.StartTimer(); });
+        GeneralInformationWindowUI.Instance.CallWindow(message: _levelSceneInfo.InfoMessage, action: () => { _timerUI.StartTimer(); });
     }
 
     private void InitializePatternFrames()
@@ -71,7 +77,7 @@ public class GuessPatternGame : MonoBehaviour
         }
     }
 
-    private void OnPatternFrameClicked(PatternFrameUI patterFrameUI)
+    private async void OnPatternFrameClicked(PatternFrameUI patterFrameUI)
     {
         if (_clickedCount == _patternFrameUIs.Length - 1) // last member
         {
@@ -80,11 +86,11 @@ public class GuessPatternGame : MonoBehaviour
             if (IsArraySortedAscending(_selectedPattern))
             {
                 // win condition
-                ResetPattern(true);
+                await ResetPattern(true);
             }
             else
             {
-                ResetPattern();
+                await ResetPattern();
             }
             ClearArray(_selectedPattern);
         }
@@ -96,7 +102,7 @@ public class GuessPatternGame : MonoBehaviour
 
     }
 
-    private void ResetPattern(bool won = false)
+    private async Task ResetPattern(bool won = false)
     {
         if (won)
         {
@@ -106,7 +112,7 @@ public class GuessPatternGame : MonoBehaviour
         if (_currentStage >= _levelSceneInfo.LevelStageCount) // all stages complete
         {
             // level win
-            OnLevelWin();
+            await OnLevelWin();
         }
         else
         {
@@ -114,10 +120,15 @@ public class GuessPatternGame : MonoBehaviour
         }
     }
 
-    private void OnLevelWin()
+    private async Task OnLevelWin()
     {
-        _localSaveManager.SubmitScore(_levelSceneInfo.LevelId, 13);
-        Debug.Log("LEVEL WIN");
+        _localSaveManager.SubmitScore(_levelSceneInfo.LevelId, _timerUI.Timer);
+        // TO-DO call scores board
+        _scoresUI.ShowPanel();
+        // get all scores on this level
+        var allScoresOnThisLevel = await _localSaveManager.GetScores(_levelSceneInfo.LevelId);
+        // feed the scores to score board
+        _scoresUI.AddScores(allScoresOnThisLevel);
     }
 
     private bool IsArraySortedAscending(int[] array)

@@ -62,44 +62,44 @@ public class LocalSaveManager : SingletonBehaviour<LocalSaveManager>
         }
     }
 
-    public void SubmitScore(int levelId, int score)
+    public void SubmitScore(int levelId, float score)
     {
+        if (_progressData == null)
+        {
+            Debug.LogError("Profile not loaded");
+            return;
+        }
         int levelIndex = _progressData.ProgressMetrics.FindIndex(n => n.LevelId == levelId);
         ProgressMetric progressMetric = new ProgressMetric();
         // metric already exists
         if (levelIndex >= 0)
         {
             progressMetric = _progressData.ProgressMetrics[levelIndex];
-            progressMetric.LastScore = score;
-            if (progressMetric.MaxScore < score)
+            progressMetric.LastTime = score;
+            if (progressMetric.BestTime > score)
             {
-                progressMetric.MaxScore = score;
+                progressMetric.BestTime = score;
             }
             _progressData.ProgressMetrics[levelIndex] = progressMetric;
         }
-        // a new metric
+        // add a new metric
         else
         {
             progressMetric.LevelId = levelId;
-            progressMetric.MaxScore = score;
-            progressMetric.LastScore = score;
+            progressMetric.BestTime = score;
+            progressMetric.LastTime = score;
             _progressData.ProgressMetrics.Add(progressMetric);
         }
-        // silent calling async Task
+        // silent calling async Task to save data
         _ = SaveData();
     }
 
-    /// <summary>
-    /// Gets array of scores from all player profiles for specific level ID
-    /// </summary>
-    /// <returns>
-    /// Array of Score, returns default type if no profiles found
-    /// </returns>
     public async Task<Score[]> GetScores(int levelId)
     {
         List<ProgressData> allProgressData = await GetProgressDataFromAllProfiles();
         if (allProgressData.Count == 0)
         {
+            Debug.LogError("Could not get all profiles");
             return default;
         }
         return allProgressData
@@ -110,11 +110,12 @@ public class LocalSaveManager : SingletonBehaviour<LocalSaveManager>
                                         metric => new Score
                                         {
                                             PlayerName = profile.ProfileName,
-                                            LastScore = metric.LastScore,
-                                            BestScore = metric.MaxScore
+                                            LastTime = metric.LastTime,
+                                            BestTime = metric.BestTime
                                         }
                                     )
-                        ).OrderByDescending(score => score.BestScore).ToArray();
+                        ).OrderByDescending(score => score.BestTime).ToArray();
+        // it is important to reverse order, as when score UIs being instantiated, they are placed last in hiearchy by default
     }
 
     private async Task<List<ProgressData>> GetProgressDataFromAllProfiles()
@@ -122,18 +123,19 @@ public class LocalSaveManager : SingletonBehaviour<LocalSaveManager>
         List<ProgressData> _result = new List<ProgressData>();
         string[] allFilesInPersisntenFolder = Directory.GetFiles(Application.persistentDataPath);
         string[] matchingFiles = allFilesInPersisntenFolder.Where(file => Path.GetFileName(file).Contains(PREFIX)).ToArray();
-        if (matchingFiles.Length == 0)
+        string[] profileFiles = matchingFiles.Select(Path.GetFileName).ToArray();
+        if (profileFiles.Length == 0)
         {
             Debug.LogWarning("No profile save files found");
-            return null;
+            return _result;
         }
-        foreach (string profileFile in matchingFiles)
+        foreach (string profileFile in profileFiles)
         {
             string profileName = profileFile.Replace(PREFIX, "");
             var (exists, existingProfile) = await ReadProfileTextAsync(profileName);
             if (exists)
             {
-                if (TryParseFromJson<ProgressData>(existingProfile, out ProgressData progressData))
+                if (TryParseFromJson(existingProfile, out ProgressData progressData))
                 {
                     _result.Add(progressData);
                 }
@@ -175,7 +177,7 @@ public class LocalSaveManager : SingletonBehaviour<LocalSaveManager>
         }
         catch (Exception)
         {
-            Debug.LogWarning("File corrupted, could not read");
+            Debug.LogWarning("Save file corrupted, could not read");
             return false;
         }
     }
@@ -189,6 +191,6 @@ public class LocalSaveManager : SingletonBehaviour<LocalSaveManager>
 public struct Score
 {
     public string PlayerName;
-    public int LastScore;
-    public int BestScore;
+    public float LastTime;
+    public float BestTime;
 }

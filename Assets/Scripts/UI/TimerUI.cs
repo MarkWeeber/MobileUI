@@ -40,4 +40,9 @@ public class TimerUI : SingletonBehaviour<TimerUI>
     {
         return TimeSpan.FromSeconds(_timer).ToString("mm':'ss");
     }
+
+    public static string GetTimeString(float time)
+    {
+        return TimeSpan.FromSeconds(time).ToString("mm':'ss");
+    }
 }
