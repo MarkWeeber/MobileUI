@@ -9,16 +9,20 @@ public class LocalSaveManager : SingletonBehaviour<LocalSaveManager>
 {
     private const string PREFIX = "_save.dat";
     private const string PASS_PHRASE = "_+$3a0-1!d";
+    // needed to control whether to cipher the data before saving or not
     [SerializeField] private bool _cipheringEnabled = true;
 
     private ProgressData _progressData;
     public ProgressData ProgressData { get => _progressData; }
 
+    // uses singleton pattern to run some code when initialized
     protected override void Initialize()
     {
         dontDestroyOnload = true;
     }
 
+    // a user function to enter their name
+    // in the end this script should hold a Progress Data for current player
     public async Task SubmitProfileName(string profileName)
     {
         // check if profile already exists
@@ -41,6 +45,8 @@ public class LocalSaveManager : SingletonBehaviour<LocalSaveManager>
         }
     }
 
+    // a main function to be called from other scripts
+    // should they need to save data
     public async Task SaveData()
     {
         string fullPath = GetFullPath(_progressData.ProfileName);
@@ -62,6 +68,8 @@ public class LocalSaveManager : SingletonBehaviour<LocalSaveManager>
         }
     }
 
+    // an example of code to be called 
+    // in order to save score for current player profile
     public void SubmitScore(int levelId, float score)
     {
         if (_progressData == null)
@@ -94,6 +102,9 @@ public class LocalSaveManager : SingletonBehaviour<LocalSaveManager>
         _ = SaveData();
     }
 
+    // another necessary function to be called
+    // whenever it's necessary to see scores from all player
+    // for given level ID
     public async Task<Score[]> GetScores(int levelId)
     {
         List<ProgressData> allProgressData = await GetProgressDataFromAllProfiles();
@@ -118,6 +129,8 @@ public class LocalSaveManager : SingletonBehaviour<LocalSaveManager>
         // it is important to reverse order, as when score UIs being instantiated, they are placed last in hiearchy by default
     }
 
+    // a helper function to get all Progress Data from other players
+    // which were saved previously
     private async Task<List<ProgressData>> GetProgressDataFromAllProfiles()
     {
         List<ProgressData> _result = new List<ProgressData>();
@@ -144,6 +157,7 @@ public class LocalSaveManager : SingletonBehaviour<LocalSaveManager>
         return _result;
     }
 
+    // a helper function
     private async Task<(bool, string)> ReadProfileTextAsync(string profileName)
     {
         string assumedFile = GetFullPath(profileName);
@@ -159,6 +173,7 @@ public class LocalSaveManager : SingletonBehaviour<LocalSaveManager>
         return (false, string.Empty);
     }
 
+    // a helper function to parse the obtained data
     private bool TryParseFromJson<T>(string inputData, out T outputData)
     {
         outputData = default;
@@ -182,6 +197,8 @@ public class LocalSaveManager : SingletonBehaviour<LocalSaveManager>
         }
     }
 
+    // a helper function to get correct path to save or obtain save file
+    // from file system
     private string GetFullPath(string profileName)
     {
         return Application.persistentDataPath + "/" + profileName + PREFIX;
