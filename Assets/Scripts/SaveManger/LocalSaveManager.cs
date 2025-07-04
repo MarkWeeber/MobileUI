@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 
+[LazyInstatiate(true)]
 public class LocalSaveManager : SingletonBehaviour<LocalSaveManager>
 {
     private const string PREFIX = "_save.dat";
@@ -19,6 +20,20 @@ public class LocalSaveManager : SingletonBehaviour<LocalSaveManager>
     protected override void Initialize()
     {
         dontDestroyOnload = true;
+    }
+
+    // need a laze instantiation for this class
+    protected override void LazyInstantiate()
+    {
+        Debug.Log("Lazy Instantiation of LocalSaveManager");
+        //_progressData = new ProgressData("Default");
+        //await SaveData();
+    }
+
+    // necessary to unload profile, when needed to enter Enter Profile Screen
+    public void UnloadProfile()
+    {
+        _progressData = null;
     }
 
     // a user function to enter their name
