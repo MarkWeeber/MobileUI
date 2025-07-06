@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Linq;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class ScoresUI : SingletonBehaviour<ScoresUI>
@@ -6,13 +8,21 @@ public class ScoresUI : SingletonBehaviour<ScoresUI>
     [SerializeField] private GameObject _scoreBoardElementPrefab;
     [SerializeField] private Transform _background;
     [SerializeField] private Transform _contentTransform;
+    [SerializeField] private Transform _goToNextLevelButton;
 
     private ScoreBoardElementUI _instantiatedScoreBoardElement;
+    private GameLevelsAsset _gameLevelsAsset;
+    private LevelSceneInfo _currentLevelSceneInfo;
+    private int _currentLevelSceneInfoIndex;
+    private int _currentLevelSceneIndex;
+    private bool _lastLevel;
 
-    protected override void Initialize()
+
+    private void Start()
     {
-        dontDestroyOnload = true;
         SceneManager.sceneLoaded += OnSceneLoaded;
+        _gameLevelsAsset = GameContext.Instance.GameLevelsAsset;
+        CheckCurrentSceneLevelIndex();
     }
 
     private void OnDestroy()
@@ -34,6 +44,24 @@ public class ScoresUI : SingletonBehaviour<ScoresUI>
     {
         _background.gameObject.SetActive(false);
         ClearScores();
+    }
+
+    private void CheckCurrentSceneLevelIndex()
+    {
+        _currentLevelSceneIndex = SceneManager.GetActiveScene().buildIndex;
+        _currentLevelSceneInfoIndex = Array.FindIndex(_gameLevelsAsset.LevelSceneInfos, info => info.LevelSceneBuildIndex == _currentLevelSceneIndex);
+        _currentLevelSceneInfo = _gameLevelsAsset.LevelSceneInfos[_currentLevelSceneInfoIndex];
+        // check if it's the last level
+        if (_currentLevelSceneIndex == _currentLevelSceneInfo.LevelSceneBuildIndex)
+        {
+            // then disable Go To next level button
+            _goToNextLevelButton.gameObject.SetActive(false);
+            _lastLevel = true;
+        }
+        else
+        {
+            _goToNextLevelButton.gameObject.SetActive(true);
+        }
     }
 
     private void ClearScores()
@@ -59,6 +87,19 @@ public class ScoresUI : SingletonBehaviour<ScoresUI>
             _instantiatedScoreBoardElement.SetPlayerLastScore(TimerUI.GetTimeString(score.LastTime));
             _instantiatedScoreBoardElement.SetPlayerBestScore(TimerUI.GetTimeString(score.BestTime));
             reversedOrder--;
+        }
+    }
+
+    public void GoToMainMenu()
+    {
+        SceneManager.LoadScene(_gameLevelsAsset.MainSceneBuildIndex);
+    }
+
+    public void GoToNextLevel()
+    {
+        if (!_lastLevel)
+        {
+            SceneManager.LoadScene(_gameLevelsAsset.LevelSceneInfos[_currentLevelSceneInfoIndex++].LevelSceneBuildIndex);
         }
     }
 }

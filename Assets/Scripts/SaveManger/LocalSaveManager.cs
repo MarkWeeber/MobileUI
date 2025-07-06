@@ -11,7 +11,7 @@ public class LocalSaveManager : SingletonBehaviour<LocalSaveManager>
     private const string PREFIX = "_save.dat";
     private const string PASS_PHRASE = "_+$3a0-1!d";
     // needed to control whether to cipher the data before saving or not
-    [SerializeField] private bool _cipheringEnabled = true;
+    [SerializeField] private bool _cipheringEnabled = false;
 
     private ProgressData _progressData;
     public ProgressData ProgressData { get => _progressData; }
@@ -22,12 +22,11 @@ public class LocalSaveManager : SingletonBehaviour<LocalSaveManager>
         dontDestroyOnload = true;
     }
 
-    // need a laze instantiation for this class
-    protected override void LazyInstantiate()
+    // lazy instantiation for testing purposes in Editor
+    protected async override void LazyInstantiate()
     {
-        Debug.Log("Lazy Instantiation of LocalSaveManager");
-        //_progressData = new ProgressData("Default");
-        //await SaveData();
+        _progressData = new ProgressData("Default");
+        await SaveData();
     }
 
     // necessary to unload profile, when needed to enter Enter Profile Screen

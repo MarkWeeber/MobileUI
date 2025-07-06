@@ -16,5 +16,11 @@ MonoBehaviour:
   LevelSceneInfos:
   - GameName: GUESS PATTERN
     LevelSceneBuildIndex: 1
+    LevelId: 0
     InfoMessage: WELCOME TO PATTERN GAME, CLICK NUMBERS IN ASCENDING ORDER
+    LevelStageCount: 3
+  - GameName: SECOND LEVEL
+    LevelSceneBuildIndex: 1
+    LevelId: 1
+    InfoMessage: WELCOME TO SECOND LEVE
     LevelStageCount: 3
