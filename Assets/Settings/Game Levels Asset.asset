@@ -19,8 +19,8 @@ MonoBehaviour:
     LevelId: 0
     InfoMessage: WELCOME TO PATTERN GAME, CLICK NUMBERS IN ASCENDING ORDER
     LevelStageCount: 3
-  - GameName: SECOND LEVEL
-    LevelSceneBuildIndex: 1
+  - GameName: EQUATION GAME
+    LevelSceneBuildIndex: 2
     LevelId: 1
-    InfoMessage: WELCOME TO SECOND LEVE
+    InfoMessage: WELCOME TO EQUATION GAME, PUT CORRECT NUMBERS SO EQUATION WORKS
     LevelStageCount: 3
