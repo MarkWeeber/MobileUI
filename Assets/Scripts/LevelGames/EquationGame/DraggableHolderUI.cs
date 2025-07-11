@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -8,6 +9,7 @@ public class DraggableHolderUI : MonoBehaviour, IDropHandler
     private DraggableNumberUI _incomingHoldingDraggable;
 
     private static List<DraggableHolderUI> _instances = new List<DraggableHolderUI>();
+    public Action<DraggableHolderUI, int> OnNumberAccepted;
 
     private void Start()
     {
@@ -29,6 +31,7 @@ public class DraggableHolderUI : MonoBehaviour, IDropHandler
                 OnDraggableAccepted(_incomingHoldingDraggable);
                 _incomingHoldingDraggable.SetHousingHolder(this);
                 HoldingDraggable = _incomingHoldingDraggable;
+                OnNumberAccepted?.Invoke(this, HoldingDraggable.Number);
             }
         }
     }
