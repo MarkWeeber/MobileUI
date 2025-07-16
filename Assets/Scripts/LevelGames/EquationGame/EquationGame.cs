@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -6,7 +7,7 @@ using UnityEngine.SceneManagement;
 public class EquationGame : MonoBehaviour
 {
     [SerializeField] private ProgressBarSliderUI _progressBarSliderUI;
-    [SerializeField] private DraggableHolderUI[] _equationMemebers;
+    [SerializeField] private DraggableHolderUI[] _equationMembers;
     [SerializeField] private DraggableHolderUI[] _variantMemebers;
     [SerializeField] private GameObject _draggableNumberPrefab;
     [SerializeField] private TMP_Text _firstOperator;
@@ -18,6 +19,8 @@ public class EquationGame : MonoBehaviour
     private GameLevelsAsset _gameLevelsAsset;
     private LevelSceneInfo _levelSceneInfo;
     private DraggableNumberUI _instantiatedDraggableNumber;
+    private EquationRow _pickedEquationRow;
+    private int _currentStage = 0;
 
     private void Start()
     {
@@ -26,6 +29,14 @@ public class EquationGame : MonoBehaviour
         _scoresUI = ScoresUI.Instance;
         GetLevelData();
         AnnounceOnStart();
+        InitializeProgressBar();
+        AssignEventCallbacks();
+        SetUpEquation();
+    }
+
+    private void OnDestroy()
+    {
+        ClearCallbacks();
     }
 
     private void GetLevelData()
@@ -40,15 +51,132 @@ public class EquationGame : MonoBehaviour
         GeneralInformationWindowUI.Instance.CallWindow(message: _levelSceneInfo.InfoMessage, action: () => { _timerUI.StartTimer(); });
     }
 
+    private void InitializeProgressBar()
+    {
+        _progressBarSliderUI.StageCount = _levelSceneInfo.LevelStageCount;
+        _progressBarSliderUI.Initialize();
+    }
+
     #region equation set-up
     private void SetUpEquation()
     {
-        
+        // pick equation
+        _pickedEquationRow = equations[Random.Range(0, equations.Length)];
+        Debug.Log(_pickedEquationRow.ToString());
+        // random numbers setup for members
+        int firstMissingMember = Random.Range(0, 4);
+        int secondMissingMember = Random.Range(0, 4);
+        // make sure first and second members are not equal
+        while (firstMissingMember == secondMissingMember)
+        {
+            secondMissingMember = Random.Range(0, 4);
+        }
+        // fill in equation members
+        for (int i = 0; i < 4; i++)
+        {
+            // clear existing number
+            _equationMembers[i].ClearHoldingNumber();
+            // the missing ones should have no draggableUI inside of them
+            if (i == firstMissingMember || i == secondMissingMember)
+            {
+                continue;
+            }
+            PlaceDraggableUI(_pickedEquationRow.GetMemberValue(i), _equationMembers[i].transform, false);
+        }
+        // random numbers setup for variants
+        int firstCorrectVariant = Random.Range(0, 5);
+        int secondCorrectVariant = Random.Range(0, 5);
+        // make sure first and second variants are not equal
+        while (firstCorrectVariant == secondCorrectVariant)
+        {
+            secondMissingMember = Random.Range(0, 5);
+        }
+        // fill in variants
+        for (int i = 0; i < 5; i++)
+        {
+            // clear existing number
+            _variantMemebers[i].ClearHoldingNumber();
+            // place correct answer at randomly picked variant
+            if (i == firstCorrectVariant)
+            {
+                PlaceDraggableUI(_pickedEquationRow.GetMemberValue(firstMissingMember), _variantMemebers[i].transform);
+                continue;
+            }
+            // place correct answer at randomly picked variant
+            if (i == secondCorrectVariant)
+            {
+                PlaceDraggableUI(_pickedEquationRow.GetMemberValue(secondMissingMember), _variantMemebers[i].transform);
+                continue;
+            }
+            // place wrong asnwer on other variants
+            PlaceDraggableUI(Random.Range(_pickedEquationRow.MinNumber() - 5, _pickedEquationRow.MaxNumber() + 5), _variantMemebers[i].transform);
+        }
+        // fill operators
+        _firstOperator.text = _pickedEquationRow.GetFirstOperator();
+        _secondOperator.text = _pickedEquationRow.GetSecondOperator();
+    }
+
+    private void PlaceDraggableUI(int number, Transform parentTransform, bool draggingEnabled = true)
+    {
+        _instantiatedDraggableNumber = Instantiate(_draggableNumberPrefab, parentTransform).GetComponent<DraggableNumberUI>();
+        _instantiatedDraggableNumber.Number = number;
+        _instantiatedDraggableNumber.DraggingEnabled = draggingEnabled;
     }
     #endregion
 
     #region equiation checking
+    private void AssignEventCallbacks()
+    {
+        foreach (var member in _equationMembers)
+        {
+            member.OnNumberAccepted += CheckEquation;
+        }
+    }
 
+    private void ClearCallbacks()
+    {
+        foreach (var member in _equationMembers)
+        {
+            member.OnNumberAccepted -= CheckEquation;
+        }
+    }
+
+    private async void CheckEquation()
+    {
+        Debug.Log("Checking");
+        bool matched = true;
+        for (int i = 0; i < _equationMembers.Length; i++)
+        {
+            if (_equationMembers[i].HoldingDraggable == null || _equationMembers[i].HoldingDraggable.Number != _pickedEquationRow.GetMemberValue(i))
+            {
+                matched = false;
+                break;
+            }
+        }
+        // stage win
+        if (matched)
+        {
+            SetUpEquation();
+            _currentStage++;
+            _progressBarSliderUI.PushProgress();
+            if (_currentStage >= _levelSceneInfo.LevelStageCount) // last stage win
+            {
+                await OnLevelWin();
+            }
+        }
+    }
+
+
+    private async Task OnLevelWin()
+    {
+        _localSaveManager.SubmitScore(_levelSceneInfo.LevelId, _timerUI.Timer);
+        // TO-DO call scores board
+        _scoresUI.ShowPanel();
+        // get all scores on this level
+        var allScoresOnThisLevel = await _localSaveManager.GetScores(_levelSceneInfo.LevelId);
+        // feed the scores to score board
+        _scoresUI.AddScores(allScoresOnThisLevel);
+    }
     #endregion
 
     #region fixed equation examples
@@ -74,6 +202,84 @@ public class EquationGame : MonoBehaviour
             this.secondOperator = secondOperator;
             this.c = c;
             this.answer = answer;
+        }
+        public int GetMemberValue(int index)
+        {
+            int result = 0;
+            if (index == 0) result = a;
+            if (index == 1) result = b;
+            if (index == 2) result = c;
+            if (index == 3) result = answer;
+            return result;
+        }
+
+        public int MaxNumber()
+        {
+            return Mathf.Max(a, b, c, answer);
+        }
+
+        public int MinNumber()
+        {
+            return Mathf.Min(a, b, c, answer);
+        }
+
+        public string GetFirstOperator()
+        {
+            string resultOperator = "";
+            switch (firstOperator)
+            {
+                case Operator.Add:
+                    resultOperator = "+";
+                    break;
+                case Operator.Subtract:
+                    resultOperator = "-";
+                    break;
+                case Operator.Multiply:
+                    resultOperator = "x";
+                    break;
+                case Operator.Divide:
+                    resultOperator = "÷";
+                    break;
+                default:
+                    resultOperator = "";
+                    break;
+            }
+            return resultOperator;
+        }
+
+        public string GetSecondOperator()
+        {
+            string resultOperator = "";
+            switch (secondOperator)
+            {
+                case Operator.Add:
+                    resultOperator = "+";
+                    break;
+                case Operator.Subtract:
+                    resultOperator = "-";
+                    break;
+                case Operator.Multiply:
+                    resultOperator = "x";
+                    break;
+                case Operator.Divide:
+                    resultOperator = "÷";
+                    break;
+                default:
+                    resultOperator = "";
+                    break;
+            }
+            return resultOperator;
+        }
+
+        public override string ToString()
+        {
+            return 
+                a.ToString() + " " 
+                + GetFirstOperator() + " " 
+                + b.ToString() + " " 
+                + GetSecondOperator() + " " 
+                + c.ToString() + " = " 
+                + answer.ToString();
         }
     }
 

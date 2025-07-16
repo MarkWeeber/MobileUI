@@ -6,9 +6,15 @@ using UnityEngine.UI;
 
 public class DraggableNumberUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler
 {
+    
     [SerializeField] private TMP_Text _numberText;
     [SerializeField] private Image _backgroundImage;
     [SerializeField] private Image _bordersImage;
+    [SerializeField] private Color _dragabbleColor;
+    [SerializeField] private Color _disabledDraggableColor;
+
+    private bool _draggingEnabled = true;
+    public bool DraggingEnabled { get => _draggingEnabled; set => SetDraggingEnabled(value); }
 
     private int _number;
     public int Number { get => _number; set => SetNumber(value); }
@@ -46,6 +52,19 @@ public class DraggableNumberUI : MonoBehaviour, IDragHandler, IBeginDragHandler,
         }
     }
 
+    private void SetDraggingEnabled(bool enabled)
+    {
+        _draggingEnabled = enabled;
+        if (enabled)
+        {
+            _bordersImage.color = _dragabbleColor;
+        }
+        else
+        {
+            _bordersImage.color = _disabledDraggableColor;
+        }
+    }
+
     private void SetNumber(int number)
     {
         _numberText.text = number.ToString();
@@ -54,34 +73,43 @@ public class DraggableNumberUI : MonoBehaviour, IDragHandler, IBeginDragHandler,
 
     public void OnDrag(PointerEventData eventData)
     {
-        transform.position = eventData.position;
+        if (_draggingEnabled)
+        {
+            transform.position = eventData.position;
+        }
     }
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        _bordersImage.raycastTarget = false;
-        transform.parent = _topViewCanvas.transform;
-        _topViewCanvas.sortingOrder = 99;
-        _backgroundTransitionColorOnDrag = _backgroundImage.color;
-        _backgroundTransitionColorOnDrag.a = 0.5f;
-        _backgroundImage.color = _backgroundTransitionColorOnDrag;
-        _bordersTransitionColorOnDrag = _bordersImage.color;
-        _bordersTransitionColorOnDrag.a = 0.5f;
-        _bordersImage.color = _bordersTransitionColorOnDrag;
+        if (_draggingEnabled)
+        {
+            _bordersImage.raycastTarget = false;
+            transform.parent = _topViewCanvas.transform;
+            _topViewCanvas.sortingOrder = 99;
+            _backgroundTransitionColorOnDrag = _backgroundImage.color;
+            _backgroundTransitionColorOnDrag.a = 0.5f;
+            _backgroundImage.color = _backgroundTransitionColorOnDrag;
+            _bordersTransitionColorOnDrag = _bordersImage.color;
+            _bordersTransitionColorOnDrag.a = 0.5f;
+            _bordersImage.color = _bordersTransitionColorOnDrag;
+        }
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        transform.parent = _homeTransform;
-        transform.position = _homeTransform.position;
-        _bordersImage.raycastTarget = true;
-        _topViewCanvas.sortingOrder = _initialSortingOrder;
-        _backgroundTransitionColorOnDrag = _backgroundImage.color;
-        _backgroundTransitionColorOnDrag.a = 1f;
-        _backgroundImage.color = _backgroundTransitionColorOnDrag;
-        _bordersTransitionColorOnDrag = _bordersImage.color;
-        _bordersTransitionColorOnDrag.a = 1f;
-        _bordersImage.color = _bordersTransitionColorOnDrag;
+        if (_draggingEnabled)
+        {
+            transform.parent = _homeTransform;
+            transform.position = _homeTransform.position;
+            _bordersImage.raycastTarget = true;
+            _topViewCanvas.sortingOrder = _initialSortingOrder;
+            _backgroundTransitionColorOnDrag = _backgroundImage.color;
+            _backgroundTransitionColorOnDrag.a = 1f;
+            _backgroundImage.color = _backgroundTransitionColorOnDrag;
+            _bordersTransitionColorOnDrag = _bordersImage.color;
+            _bordersTransitionColorOnDrag.a = 1f;
+            _bordersImage.color = _bordersTransitionColorOnDrag;
+        }
     }
 
     public void SetHousingHolder(DraggableHolderUI holder)

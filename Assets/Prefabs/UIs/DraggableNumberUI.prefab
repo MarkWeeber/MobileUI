@@ -61,7 +61,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.99816656, g: 1, b: 0.495283, a: 1}
+  m_Color: {r: 0.8436792, g: 1, b: 0, a: 1}
   m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -92,6 +92,8 @@ MonoBehaviour:
   _numberText: {fileID: 4810548202154576443}
   _backgroundImage: {fileID: 4810548201779735053}
   _bordersImage: {fileID: 4810548201405225719}
+  _dragabbleColor: {r: 0.84313726, g: 1, b: 0, a: 1}
+  _disabledDraggableColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &4810548201779735055
 GameObject:
   m_ObjectHideFlags: 0

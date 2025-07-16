@@ -5,11 +5,12 @@ using UnityEngine.EventSystems;
 
 public class DraggableHolderUI : MonoBehaviour, IDropHandler
 {
-    public DraggableNumberUI HoldingDraggable { get; set; }
+    private DraggableNumberUI _draggableNumberUI;
+    public DraggableNumberUI HoldingDraggable { get => _draggableNumberUI; }
     private DraggableNumberUI _incomingHoldingDraggable;
 
     private static List<DraggableHolderUI> _instances = new List<DraggableHolderUI>();
-    public Action<DraggableHolderUI, int> OnNumberAccepted;
+    public Action OnNumberAccepted;
 
     private void Start()
     {
@@ -17,7 +18,7 @@ public class DraggableHolderUI : MonoBehaviour, IDropHandler
         var childNumber = GetComponentInChildren<DraggableNumberUI>();
         if (childNumber != null)
         {
-            HoldingDraggable = childNumber;
+            _draggableNumberUI = childNumber;
             childNumber.SetHousingHolder(this);
         }
     }
@@ -26,13 +27,22 @@ public class DraggableHolderUI : MonoBehaviour, IDropHandler
     {
         if (eventData.pointerDrag.TryGetComponent<DraggableNumberUI>(out _incomingHoldingDraggable))
         {
-            if (HoldingDraggable == null && HoldingDraggable != _incomingHoldingDraggable)
+            if (_draggableNumberUI == null && _draggableNumberUI != _incomingHoldingDraggable)
             {
                 OnDraggableAccepted(_incomingHoldingDraggable);
                 _incomingHoldingDraggable.SetHousingHolder(this);
-                HoldingDraggable = _incomingHoldingDraggable;
-                OnNumberAccepted?.Invoke(this, HoldingDraggable.Number);
+                _draggableNumberUI = _incomingHoldingDraggable;
+                OnNumberAccepted?.Invoke();
             }
+        }
+    }
+
+    public void ClearHoldingNumber()
+    {
+        if (_draggableNumberUI != null)
+        {
+            Destroy(_draggableNumberUI.gameObject);
+            _draggableNumberUI = null;
         }
     }
 
@@ -40,9 +50,9 @@ public class DraggableHolderUI : MonoBehaviour, IDropHandler
     {
         foreach (var instance in _instances)
         {
-            if (instance.HoldingDraggable == draggableNumber)
+            if (instance._draggableNumberUI == draggableNumber)
             {
-                instance.HoldingDraggable = null;
+                instance._draggableNumberUI = null;
             }
         }
     }
