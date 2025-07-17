@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 public class DraggableHolderUI : MonoBehaviour, IDropHandler
 {
     private DraggableNumberUI _draggableNumberUI;
-    public DraggableNumberUI HoldingDraggable { get => _draggableNumberUI; }
+    public DraggableNumberUI HoldingDraggable { get => _draggableNumberUI; set => _draggableNumberUI = value; }
     private DraggableNumberUI _incomingHoldingDraggable;
 
     private static List<DraggableHolderUI> _instances = new List<DraggableHolderUI>();
@@ -15,12 +15,7 @@ public class DraggableHolderUI : MonoBehaviour, IDropHandler
     private void Start()
     {
         _instances.Add(this);
-        var childNumber = GetComponentInChildren<DraggableNumberUI>();
-        if (childNumber != null)
-        {
-            _draggableNumberUI = childNumber;
-            childNumber.SetHousingHolder(this);
-        }
+        CheckIfHolding();
     }
 
     public void OnDrop(PointerEventData eventData)
@@ -42,7 +37,17 @@ public class DraggableHolderUI : MonoBehaviour, IDropHandler
         if (_draggableNumberUI != null)
         {
             Destroy(_draggableNumberUI.gameObject);
-            _draggableNumberUI = null;
+        }
+        _draggableNumberUI = null;
+    }
+
+    private void CheckIfHolding()
+    {
+        var childNumber = GetComponentInChildren<DraggableNumberUI>();
+        if (childNumber != null)
+        {
+            _draggableNumberUI = childNumber;
+            childNumber.SetHousingHolder(this);
         }
     }
 

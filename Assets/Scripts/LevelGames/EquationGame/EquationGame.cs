@@ -81,7 +81,7 @@ public class EquationGame : MonoBehaviour
             {
                 continue;
             }
-            PlaceDraggableUI(_pickedEquationRow.GetMemberValue(i), _equationMembers[i].transform, false);
+            PlaceDraggableUI(_pickedEquationRow.GetMemberValue(i), _equationMembers[i].transform, _equationMembers[i], false);
         }
         // random numbers setup for variants
         int firstCorrectVariant = Random.Range(0, 5);
@@ -99,28 +99,29 @@ public class EquationGame : MonoBehaviour
             // place correct answer at randomly picked variant
             if (i == firstCorrectVariant)
             {
-                PlaceDraggableUI(_pickedEquationRow.GetMemberValue(firstMissingMember), _variantMemebers[i].transform);
+                PlaceDraggableUI(_pickedEquationRow.GetMemberValue(firstMissingMember), _variantMemebers[i].transform, _variantMemebers[i]);
                 continue;
             }
             // place correct answer at randomly picked variant
             if (i == secondCorrectVariant)
             {
-                PlaceDraggableUI(_pickedEquationRow.GetMemberValue(secondMissingMember), _variantMemebers[i].transform);
+                PlaceDraggableUI(_pickedEquationRow.GetMemberValue(secondMissingMember), _variantMemebers[i].transform, _variantMemebers[i]);
                 continue;
             }
             // place wrong asnwer on other variants
-            PlaceDraggableUI(Random.Range(_pickedEquationRow.MinNumber() - 5, _pickedEquationRow.MaxNumber() + 5), _variantMemebers[i].transform);
+            PlaceDraggableUI(Random.Range(_pickedEquationRow.MinNumber() - 5, _pickedEquationRow.MaxNumber() + 5), _variantMemebers[i].transform, _variantMemebers[i]);
         }
         // fill operators
         _firstOperator.text = _pickedEquationRow.GetFirstOperator();
         _secondOperator.text = _pickedEquationRow.GetSecondOperator();
     }
 
-    private void PlaceDraggableUI(int number, Transform parentTransform, bool draggingEnabled = true)
+    private void PlaceDraggableUI(int number, Transform parentTransform, DraggableHolderUI holder, bool draggingEnabled = true)
     {
         _instantiatedDraggableNumber = Instantiate(_draggableNumberPrefab, parentTransform).GetComponent<DraggableNumberUI>();
         _instantiatedDraggableNumber.Number = number;
         _instantiatedDraggableNumber.DraggingEnabled = draggingEnabled;
+        holder.HoldingDraggable = _instantiatedDraggableNumber;
     }
     #endregion
 
@@ -143,12 +144,19 @@ public class EquationGame : MonoBehaviour
 
     private async void CheckEquation()
     {
-        Debug.Log("Checking");
+        //Debug.Log("Checking");
         bool matched = true;
         for (int i = 0; i < _equationMembers.Length; i++)
         {
-            if (_equationMembers[i].HoldingDraggable == null || _equationMembers[i].HoldingDraggable.Number != _pickedEquationRow.GetMemberValue(i))
+            if (_equationMembers[i].HoldingDraggable == null)
             {
+                Debug.Log("was null at " + i);
+                matched = false;
+                break;
+            }
+            else if (_equationMembers[i].HoldingDraggable.Number != _pickedEquationRow.GetMemberValue(i))
+            {
+                Debug.Log("did not equal");
                 matched = false;
                 break;
             }
@@ -156,12 +164,17 @@ public class EquationGame : MonoBehaviour
         // stage win
         if (matched)
         {
-            SetUpEquation();
+            Debug.Log("No mismatches");
             _currentStage++;
             _progressBarSliderUI.PushProgress();
             if (_currentStage >= _levelSceneInfo.LevelStageCount) // last stage win
             {
+                Debug.Log("On level win");
                 await OnLevelWin();
+            }
+            else
+            {
+                SetUpEquation();
             }
         }
     }

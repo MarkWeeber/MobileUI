@@ -14,6 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MainSceneBuildIndex: 0
   LevelSceneInfos:
+  - GameName: Main scene
+    LevelSceneBuildIndex: 0
+    LevelId: 0
+    InfoMessage: NO INFO
+    LevelStageCount: 3
   - GameName: GUESS PATTERN
     LevelSceneBuildIndex: 1
     LevelId: 0
