@@ -1901,7 +1901,7 @@ PrefabInstance:
     - target: {fileID: 6736179144914203927, guid: b8672e6a8a7e48e4f8944e04e07c5536,
         type: 3}
       propertyPath: m_text
-      value: LEVEL 3
+      value: MATCHING PAIRS
       objectReference: {fileID: 0}
     - target: {fileID: 6736179144914203929, guid: b8672e6a8a7e48e4f8944e04e07c5536,
         type: 3}
@@ -1956,7 +1956,7 @@ PrefabInstance:
     - target: {fileID: 6736179145438192474, guid: b8672e6a8a7e48e4f8944e04e07c5536,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_IntArgument
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6736179145438192474, guid: b8672e6a8a7e48e4f8944e04e07c5536,
         type: 3}

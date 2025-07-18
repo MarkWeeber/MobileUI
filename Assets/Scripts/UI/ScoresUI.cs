@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -51,8 +50,9 @@ public class ScoresUI : SingletonBehaviour<ScoresUI>
         _currentLevelSceneIndex = SceneManager.GetActiveScene().buildIndex;
         _currentLevelSceneInfoIndex = Array.FindIndex(_gameLevelsAsset.LevelSceneInfos, info => info.LevelSceneBuildIndex == _currentLevelSceneIndex);
         _currentLevelSceneInfo = _gameLevelsAsset.LevelSceneInfos[_currentLevelSceneInfoIndex];
+        int lastLevelSceneBuildIndex = _gameLevelsAsset.LevelSceneInfos[_gameLevelsAsset.LevelSceneInfos.Length - 1].LevelSceneBuildIndex;
         // check if it's the last level
-        if (_currentLevelSceneIndex == _currentLevelSceneInfo.LevelSceneBuildIndex)
+        if (_currentLevelSceneInfo.LevelSceneBuildIndex == lastLevelSceneBuildIndex)
         {
             // then disable Go To next level button
             _goToNextLevelButton.gameObject.SetActive(false);
@@ -99,7 +99,7 @@ public class ScoresUI : SingletonBehaviour<ScoresUI>
     {
         if (!_lastLevel)
         {
-            SceneManager.LoadScene(_gameLevelsAsset.LevelSceneInfos[_currentLevelSceneInfoIndex++].LevelSceneBuildIndex);
+            SceneManager.LoadScene(_gameLevelsAsset.LevelSceneInfos[_currentLevelSceneInfoIndex+1].LevelSceneBuildIndex);
         }
     }
 }

@@ -16,7 +16,7 @@ MonoBehaviour:
   LevelSceneInfos:
   - GameName: Main scene
     LevelSceneBuildIndex: 0
-    LevelId: 0
+    LevelId: -1
     InfoMessage: NO INFO
     LevelStageCount: 3
   - GameName: GUESS PATTERN
@@ -28,4 +28,9 @@ MonoBehaviour:
     LevelSceneBuildIndex: 2
     LevelId: 1
     InfoMessage: WELCOME TO EQUATION GAME, PUT CORRECT NUMBERS SO EQUATION WORKS
+    LevelStageCount: 3
+  - GameName: MATCHING PAIRS
+    LevelSceneBuildIndex: 3
+    LevelId: 2
+    InfoMessage: WELCOME TO MATCHING PAIRS, PICK CARDS WITH SAME ICONS TO PROGRESS
     LevelStageCount: 3

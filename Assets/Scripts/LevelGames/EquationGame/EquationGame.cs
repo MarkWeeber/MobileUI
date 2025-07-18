@@ -144,19 +144,16 @@ public class EquationGame : MonoBehaviour
 
     private async void CheckEquation()
     {
-        //Debug.Log("Checking");
         bool matched = true;
         for (int i = 0; i < _equationMembers.Length; i++)
         {
             if (_equationMembers[i].HoldingDraggable == null)
             {
-                Debug.Log("was null at " + i);
                 matched = false;
                 break;
             }
             else if (_equationMembers[i].HoldingDraggable.Number != _pickedEquationRow.GetMemberValue(i))
             {
-                Debug.Log("did not equal");
                 matched = false;
                 break;
             }
@@ -164,12 +161,10 @@ public class EquationGame : MonoBehaviour
         // stage win
         if (matched)
         {
-            Debug.Log("No mismatches");
             _currentStage++;
             _progressBarSliderUI.PushProgress();
             if (_currentStage >= _levelSceneInfo.LevelStageCount) // last stage win
             {
-                Debug.Log("On level win");
                 await OnLevelWin();
             }
             else
