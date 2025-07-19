@@ -169,10 +169,11 @@ MonoBehaviour:
   _basePanelImage: {fileID: 5301624056066825033}
   _backImage: {fileID: 5301624056371309008}
   _cardImage: {fileID: 5301624055542722548}
-  _flipDuration: 1
-  _shrinkDuration: 1
+  _flipDuration: 0.5
+  _shrinkDuration: 0.5
   _normalColor: {r: 1, g: 1, b: 1, a: 1}
   _completeColor: {r: 0, g: 1, b: 0, a: 1}
+  CardShrunk: 0
 --- !u!1 &5301624056371309010
 GameObject:
   m_ObjectHideFlags: 0

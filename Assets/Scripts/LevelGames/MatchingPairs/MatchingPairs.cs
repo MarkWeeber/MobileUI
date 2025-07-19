@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 public class MatchingPairs : MonoBehaviour
 {
     [SerializeField] private ProgressBarSliderUI _progressBarSliderUI;
+    [SerializeField] private float _pauseBetweenStages = 0.6f;
 
     private LocalSaveManager _localSaveManager;
     private TimerUI _timerUI;
@@ -85,9 +86,15 @@ public class MatchingPairs : MonoBehaviour
     {
         for (int i = 0; i < _cardUIs.Length; i++)
         {
-            _cardUIs[i].Restart();
+            if (i == _cardUIs.Length - 1)
+            {
+                _cardUIs[i].Restart(longDisplayAtStart: true, enableInteractionsOnEnd: true);
+            }
+            else
+            {
+                _cardUIs[i].Restart(longDisplayAtStart: true);
+            }    
         }
-        FlipCardUI.InteractionEnabled = true;
     }
 
     private void ShuffleCards()
@@ -99,7 +106,7 @@ public class MatchingPairs : MonoBehaviour
         }
     }
 
-    private async void OnCardFlipped(FlipCardUI card)
+    private void OnCardFlipped(FlipCardUI card)
     {
         // check if more than one picked
         if (_previousCard == null)
@@ -117,13 +124,15 @@ public class MatchingPairs : MonoBehaviour
             // flip back both
             _previousCard.Restart();
             card.Restart(enableInteractionsOnEnd: true);
+            _previousCard = null;
         }
         // same types
-        else
+        else if (_previousCard.Type == card.Type)
         {
             // shrink both
             _previousCard.Shrink();
             card.Shrink(enableInteractionsOnEnd: true);
+            _previousCard = null;
             // check if all cards are shrunk, if so then push progress
             if (AllCardsWin())
             {
@@ -132,12 +141,12 @@ public class MatchingPairs : MonoBehaviour
                 // restart deck if still stages left, otherwise call level win
                 if (_currentStage >= _levelSceneInfo.LevelStageCount) // last stage win
                 {
-                    await OnLevelWin();
+                    _ = OnLevelWin();
                 }
                 // still rounds left
                 else
                 {
-                    RestartDeck();
+                    Invoke(nameof(RestartDeck), _pauseBetweenStages);
                 }
             }
         }
@@ -167,6 +176,4 @@ public class MatchingPairs : MonoBehaviour
         }
         return result;
     }
-
-
 }

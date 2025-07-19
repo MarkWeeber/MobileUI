@@ -151,6 +151,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _progressBarSliderUI: {fileID: 1339517651}
+  _pauseBetweenStages: 0.6
 --- !u!4 &7932358
 Transform:
   m_ObjectHideFlags: 0
@@ -288,6 +289,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: FlipCardUI_FirstType (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5301624056066825039, guid: 1a58cb5280ad8ae4788078ac0e56e429,
+        type: 3}
+      propertyPath: _cardType
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1a58cb5280ad8ae4788078ac0e56e429, type: 3}
@@ -647,7 +653,7 @@ PrefabInstance:
     - target: {fileID: 5301624056066825039, guid: 1a58cb5280ad8ae4788078ac0e56e429,
         type: 3}
       propertyPath: _cardType
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1a58cb5280ad8ae4788078ac0e56e429, type: 3}
@@ -882,7 +888,7 @@ PrefabInstance:
     - target: {fileID: 5301624056066825039, guid: 1a58cb5280ad8ae4788078ac0e56e429,
         type: 3}
       propertyPath: _cardType
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1a58cb5280ad8ae4788078ac0e56e429, type: 3}
@@ -1093,7 +1099,7 @@ PrefabInstance:
     - target: {fileID: 5301624056066825039, guid: 1a58cb5280ad8ae4788078ac0e56e429,
         type: 3}
       propertyPath: _cardType
-      value: 4
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1a58cb5280ad8ae4788078ac0e56e429, type: 3}
@@ -1304,7 +1310,7 @@ PrefabInstance:
     - target: {fileID: 5301624056066825039, guid: 1a58cb5280ad8ae4788078ac0e56e429,
         type: 3}
       propertyPath: _cardType
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1a58cb5280ad8ae4788078ac0e56e429, type: 3}
@@ -1440,7 +1446,7 @@ PrefabInstance:
     - target: {fileID: 5301624056066825039, guid: 1a58cb5280ad8ae4788078ac0e56e429,
         type: 3}
       propertyPath: _cardType
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1a58cb5280ad8ae4788078ac0e56e429, type: 3}
@@ -1576,7 +1582,7 @@ PrefabInstance:
     - target: {fileID: 5301624056066825039, guid: 1a58cb5280ad8ae4788078ac0e56e429,
         type: 3}
       propertyPath: _cardType
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1a58cb5280ad8ae4788078ac0e56e429, type: 3}
@@ -1980,7 +1986,7 @@ PrefabInstance:
     - target: {fileID: 5301624056066825039, guid: 1a58cb5280ad8ae4788078ac0e56e429,
         type: 3}
       propertyPath: _cardType
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1a58cb5280ad8ae4788078ac0e56e429, type: 3}
@@ -3202,7 +3208,7 @@ PrefabInstance:
     - target: {fileID: 5301624056066825039, guid: 1a58cb5280ad8ae4788078ac0e56e429,
         type: 3}
       propertyPath: _cardType
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1a58cb5280ad8ae4788078ac0e56e429, type: 3}
@@ -3475,7 +3481,7 @@ PrefabInstance:
     - target: {fileID: 5301624056066825039, guid: 1a58cb5280ad8ae4788078ac0e56e429,
         type: 3}
       propertyPath: _cardType
-      value: 4
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1a58cb5280ad8ae4788078ac0e56e429, type: 3}
@@ -3856,7 +3862,7 @@ PrefabInstance:
     - target: {fileID: 5301624056066825039, guid: 1a58cb5280ad8ae4788078ac0e56e429,
         type: 3}
       propertyPath: _cardType
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1a58cb5280ad8ae4788078ac0e56e429, type: 3}
@@ -4162,6 +4168,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: FlipCardUI_FirstType
+      objectReference: {fileID: 0}
+    - target: {fileID: 5301624056066825039, guid: 1a58cb5280ad8ae4788078ac0e56e429,
+        type: 3}
+      propertyPath: _cardType
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1a58cb5280ad8ae4788078ac0e56e429, type: 3}
